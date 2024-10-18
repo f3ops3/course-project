@@ -1,0 +1,12 @@
+databaseChangeLog:
+  - changeSet:
+      id: insert-relation-in-shopping-carts
+      author: panchenko
+      changes:
+        - insert:
+            tableName: shopping_сarts
+            columns:
+              - column:
+                  name: user_id
+                  value: 1
+
