@@ -37,7 +37,10 @@ public class ShoppingCartServiceImpl implements ShoppingCartService {
 
     @Override
     public ShoppingCartResponseDto getShoppingCartForCurrentUser(Long userId) {
-        return shoppingCartMapper.toDto(shoppingCartRepository.findByUserId(userId));
+        return shoppingCartMapper.toDto(shoppingCartRepository.findByUserId(userId).orElseThrow(
+                () -> new EntityNotFoundException("Couldn't find ")
+                )
+        );
     }
 
     @Transactional
@@ -48,7 +51,10 @@ public class ShoppingCartServiceImpl implements ShoppingCartService {
                 () -> new EntityNotFoundException("Couldn't find a book with id = "
                         + createCartItemRequestDto.getBookId())
         );
-        ShoppingCart shoppingCart = shoppingCartRepository.findByUserId(userId);
+        ShoppingCart shoppingCart = shoppingCartRepository.findByUserId(userId).orElseThrow(
+                () -> new EntityNotFoundException("Couldn't find shopping cart with "
+                        + "user id = " + userId)
+        );
         Optional<CartItem> existingCartItem = shoppingCart.getCartItems().stream()
                 .filter(item -> item.getBook()
                         .getId()
@@ -93,7 +99,9 @@ public class ShoppingCartServiceImpl implements ShoppingCartService {
 
     private ShoppingCart checkIfCartItemBelongsToCurrentUser(
             Long cartId, CartItem cartItem, Long userId) {
-        ShoppingCart shoppingCart = shoppingCartRepository.findByUserId(userId);
+        ShoppingCart shoppingCart = shoppingCartRepository.findByUserId(userId).orElseThrow(
+                () -> new EntityNotFoundException("Couldn't find cart with id = " + cartId)
+        );
         if (shoppingCart.getCartItems().stream()
                 .noneMatch(item -> item.getId().equals(cartItem.getId()))) {
             throw new DataProcessingException("Cart item with id = " + cartId
