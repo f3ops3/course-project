@@ -12,5 +12,4 @@ public interface OrderMapper {
     @Mapping(source = "orderItems", target = "orderItemsDtos",
             qualifiedByName = "toOrderItemDtoSet")
     OrderResponseDto toDto(Order order);
-
 }
